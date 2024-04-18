@@ -1,0 +1,16 @@
+body{
+    padding: 50px;
+    background-image: url(https://t4.ftcdn.net/jpg/05/42/73/17/360_F_542731787_npIDENXs9NMkl1mtyHKj8De2WBL2vnFW.jpg);
+    background-size: cover;
+}
+
+.container{
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 50px;
+    box-shadow: rgba(100, 100, 111, 0.2)0px 7px 29px 0px;
+}
+
+.form-element{
+    margin-bottom: 30px;
+}
