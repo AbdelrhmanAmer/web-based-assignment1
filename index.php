@@ -5,13 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>regstration form</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="container">
         <?php
+        require_once "db_ops.php";
         if (isset($_POST["submit"])) {
             $fullname = $_POST["fullname"];
             $username = $_POST["username"];
@@ -24,8 +26,6 @@
             $number    = preg_match('@[0-9]@', $password);
             $specialChars = preg_match('@[^\w]@', $password);
             $errors = array();
-
-
             if (empty($fullname) or empty($username) or empty($birth_date) or empty($phone) or empty($address) or empty($email) or empty($password) or empty($repeated_password)) {
                 array_push($errors, "all fields are required");
             }
@@ -43,9 +43,38 @@
                 foreach ($errors as $error) {
                     echo "<div class='alert alert-danger'>$error</div>";
                 }
+            } else {
+                // Checking if email already exists
+                $sql = "SELECT * FROM users WHERE email = ?";
+                $stmt = mysqli_stmt_init($conn);
+                $prepareStmt = mysqli_stmt_prepare($stmt, $sql);
+                if ($prepareStmt) {
+                    mysqli_stmt_bind_param($stmt, "s", $email);
+                    mysqli_stmt_execute($stmt);
+                    mysqli_stmt_store_result($stmt);
+                    $rowCount = mysqli_stmt_num_rows($stmt);
+                    if ($rowCount > 0) {
+                        echo "<div class='alert alert-danger'>Email already exists!</div>";
+                    } else {
+                        $sql = "INSERT INTO users (fullName, userName, password, email, address, phone, birthDate) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?)";
+                        $stmt = mysqli_stmt_init($conn);
+                        $prepareStmt = mysqli_stmt_prepare($stmt, $sql);
+                        if ($prepareStmt) {
+                            mysqli_stmt_bind_param($stmt, "sssssss", $fullname, $username, $password, $email, $address, $phone, $birth_date);
+                            mysqli_stmt_execute($stmt);
+                            echo "<div class='alert alert-success'>You are registered successfully.</div>";
+                        } else {
+                            echo "<div class='alert alert-danger'>Error: " . mysqli_error($conn) . "</div>";
+                        }
+                    }
+                } else {
+                    echo "<div class='alert alert-danger'>Error: " . mysqli_error($conn) . "</div>";
+                }
             }
         }
         ?>
+
         <form action="index.php" method="post">
             <div class="form-element">
                 <input type="text" class="form-control" name="fullname" placeholder="Full Name:">
