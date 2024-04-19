@@ -44,17 +44,17 @@
                     echo "<div class='alert alert-danger'>$error</div>";
                 }
             } else {
-                // Checking if email already exists
-                $sql = "SELECT * FROM users WHERE email = ?";
+                // Checking if username already exists
+                $sql = "SELECT * FROM users WHERE userName = ?";
                 $stmt = mysqli_stmt_init($conn);
                 $prepareStmt = mysqli_stmt_prepare($stmt, $sql);
                 if ($prepareStmt) {
-                    mysqli_stmt_bind_param($stmt, "s", $email);
+                    mysqli_stmt_bind_param($stmt, "s", $username);
                     mysqli_stmt_execute($stmt);
                     mysqli_stmt_store_result($stmt);
                     $rowCount = mysqli_stmt_num_rows($stmt);
                     if ($rowCount > 0) {
-                        echo "<div class='alert alert-danger'>Email already exists!</div>";
+                        echo "<div class='alert alert-danger'>userName already exists!</div>";
                     } else {
                         $sql = "INSERT INTO users (fullName, userName, password, email, address, phone, birthDate) 
                         VALUES (?, ?, ?, ?, ?, ?, ?)";
