@@ -85,8 +85,9 @@
             <div class="form-element">
                 <input type="text" class="form-control" name="username" placeholder="User Name:">
             </div>
-            <div class="form-element">
+            <div class="date-element">
                 <input type="date" class="form-control" name="birth-date" placeholder="Birth Date:">
+                <button class="ckeck-button">check</button>
             </div>
             <div class="form-element">
                 <input type="number" class="form-control" name="phone" placeholder="Phone:">
@@ -104,7 +105,7 @@
                 <input type="password" class="form-control" name="repeated-password" placeholder="Repeated Password:">
             </div>
 
-            <div class="form-element">
+            <div class="submit-button">
                 <input type="submit" class="btn-primarly" value="register" name="submit">
             </div>
         </form>
