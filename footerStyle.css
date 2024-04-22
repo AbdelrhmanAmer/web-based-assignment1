@@ -1,0 +1,38 @@
+.footer {
+    margin-top: 70px;
+    height: 15vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+}
+
+.footer .foot-info {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+
+.footer .foot-info span {
+    font-weight: bold;
+    color:black;
+    font-size: 30px;
+}
+
+a{
+    color: black;
+    padding: 20px 35px;
+    font-size: 1.5em;
+    transition: .4s all;
+}
+
+a:hover{
+    transform: scale(1.1);
+    color: rgb(27, 198, 204);
+    font-size: 1.8em;
+}
+
+
+a:hover .scoial-icons a {
+    color: black;
+} 

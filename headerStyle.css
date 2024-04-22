@@ -1,0 +1,36 @@
+header {
+    width: 100%;
+    padding: 10px 100px;
+    z-index: 999;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .logo a {
+    text-decoration: none;
+    text-transform: uppercase;
+    color: black;
+    font-weight: 700;
+    font-size: 1.9em;
+    transition: .3s ease;
+}
+
+header .logo a:hover{
+    transform: scale(1.1);
+}
+
+
+.nav a {
+    padding: 10px 30px;
+    text-decoration: none;
+    color:black;
+    font-size: 1.4em;
+    font-weight: 600;
+    transition: .3s;
+}
+
+.nav a:hover {
+    font-size: 1.6em;
+    transform: scale(1.1);
+}
