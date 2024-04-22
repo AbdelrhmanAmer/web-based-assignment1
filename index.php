@@ -129,34 +129,47 @@
                         birthdate: birthdate
                     },
                     success: function(response) {
-                        var actors = JSON.parse(response);
-
-                        if (actors.length > 0) {
-                            var actorNames = actors.map(function(actor) {
-                                return actor.node.id;
-                            }).join(", ");
-
+                        var data = JSON.parse(response);
+                        console.log(data);
+                        if (data.hasOwnProperty('error')) {
                             swal({
-                                title: "Actors Born on " + birthdate,
-                                text: actorNames,
-                                icon: 'info',
+                                title: "Error",
+                                text: "An error occurred: " + data.error,
+                                icon: 'error'
                             });
                         } else {
-                            swal({
-                                title: "No actors born at this Date" ,
-                                icon: 'info'
-                            });
+                            var actorsIds = data.actors;
+                            if (actorsIds.length > 0) {
+                                var actorNames = [];
+
+                                actorsIds.forEach(function(actorId) {
+                                    var actorName = getActorName(actorId);
+                                    if (actorName) {
+                                        actorNames.push(actorName);
+                                    }
+                                });
+
+                                swal({
+                                    title: "Actors Born on " + birthdate,
+                                    text: actorNames.join(", "),
+                                    icon: 'info'
+                                });
+                            } else {
+                                swal({
+                                    title: "No actors born on " + birthdate,
+                                    icon: 'info'
+                                });
+                            }
                         }
                     },
-                    error: function(xhr, stauts, error) {
+                    error: function(xhr, status, error) {
                         swal({
-                            title: "Error", 
+                            title: "Error",
                             text: "An error occurred: " + error,
-                            icon: 'error',
-                            
-                        })
+                            icon: 'error'
+                        });
                     }
-                })
+                });
             });
         });
     </script>
