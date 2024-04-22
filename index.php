@@ -6,12 +6,14 @@
     <title>regstration form</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
 
 <body>
     <?php
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
     ?>
     <?php include 'header.php'; ?>
     <div class="container">
@@ -86,8 +88,8 @@
                 <input type="text" class="form-control" name="username" placeholder="User Name:">
             </div>
             <div class="date-element">
-                <input type="date" class="form-control" name="birth-date" placeholder="Birth Date:">
-                <button class="ckeck-button">check</button>
+                <input type="date" class="form-control" name="birth-date" id="birth-date" placeholder="Birth Date:">
+                <button type="button" class="check-button" id="check-actors">Check Actors</button>
             </div>
             <div class="form-element">
                 <input type="number" class="form-control" name="phone" placeholder="Phone:">
@@ -110,6 +112,54 @@
             </div>
         </form>
     </div>
+    <script>
+        $(document).ready(function() {
+            $('#check-actors').click(function() {
+                var birthdate = $('#birth-date').val();
+                var parts = birthdate.split('-');
+                var month = parts[1];
+                var day = parts[2];
+                birthdate = month + '-' + day;
+
+                $.ajax({
+                    url: "api_ops.php",
+                    type: 'POST',
+                    data: {
+                        action: 'getActorsBornOnDate',
+                        birthdate: birthdate
+                    },
+                    success: function(response) {
+                        var actors = JSON.parse(response);
+
+                        if (actors.length > 0) {
+                            var actorNames = actors.map(function(actor) {
+                                return actor.node.id;
+                            }).join(", ");
+
+                            swal({
+                                title: "Actors Born on " + birthdate,
+                                text: actorNames,
+                                icon: 'info',
+                            });
+                        } else {
+                            swal({
+                                title: "No actors born at this Date" ,
+                                icon: 'info'
+                            });
+                        }
+                    },
+                    error: function(xhr, stauts, error) {
+                        swal({
+                            title: "Error", 
+                            text: "An error occurred: " + error,
+                            icon: 'error',
+                            
+                        })
+                    }
+                })
+            });
+        });
+    </script>
     <?php include 'footer.php'; ?>
 </body>
 
