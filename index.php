@@ -151,7 +151,7 @@
                     },
                     success: function(response) {
                         var data = JSON.parse(response);
-                        console.log(data);
+
                         if (data.hasOwnProperty('error')) {
                             swal({
                                 title: "Error",
@@ -164,16 +164,40 @@
                                 var actorNames = [];
 
                                 actorsIds.forEach(function(actorId) {
-                                    var actorName = getActorName(actorId);
-                                    if (actorName) {
-                                        actorNames.push(actorName);
-                                    }
-                                });
+                                    $.ajax({
+                                        url: "api_ops.php",
+                                        type: "POST",
+                                        data: {
+                                            action: 'getActorName',
+                                            actorId: actorId
+                                        },
+                                        success: function(nameResponse) {
+                                            var actorData = JSON.parse(nameResponse);
 
-                                swal({
-                                    title: "Actors Born on " + birthdate,
-                                    text: actorNames.join(", "),
-                                    icon: 'info'
+                                            if (actorData) {
+                                                if (actorData.name) {
+                                                    actorNames.push(actorData.name);
+                                                }
+                                            } else {
+                                                swal({
+                                                    title: "ERROR",
+                                                    icon: 'error'
+                                                })
+                                            }
+                                            swal({
+                                                title: "Actors Born on " + birthdate,
+                                                text: actorNames.join(", "),
+                                                icon: 'info'
+                                            });
+                                        },
+                                        error: function(xhr, status, error) {
+                                            swal({
+                                                title: "Error",
+                                                text: "An error occurred: " + error,
+                                                icon: 'error'
+                                            });
+                                        }
+                                    })
                                 });
                             } else {
                                 swal({
@@ -193,6 +217,7 @@
                 });
             });
         });
+
     </script>
     <?php include 'footer.php'; ?>
 </body>
