@@ -5,6 +5,7 @@ CREATE TABLE users (
     fullName VARCHAR(255) NOT NULL,
     userName VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    image TEXT ,
     email VARCHAR(255) NOT NULL UNIQUE,
     address VARCHAR(255) NOT NULL,
     phone VARCHAR(20) NOT NULL,

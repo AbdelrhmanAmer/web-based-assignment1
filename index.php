@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>regstration form</title>
+    <title>Registration Form</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -30,85 +30,106 @@
             $repeated_password = $_POST["repeated-password"];
             $number    = preg_match('@[0-9]@', $password);
             $specialChars = preg_match('@[^\w]@', $password);
+            $image = time() . $_FILES["pic"]['name'];
+            $picuploaded = 0;
             $errors = array();
-            if (empty($fullname) or empty($username) or empty($birth_date) or empty($phone) or empty($address) or empty($email) or empty($password) or empty($repeated_password)) {
-                array_push($errors, "all fields are required");
+            if (move_uploaded_file($_FILES["pic"]['tmp_name'], $_SERVER["DOCUMENT_ROOT"] . '/assignment1/photo/' . $image)) {
+                $target_file = $_SERVER["DOCUMENT_ROOT"] . '/assignment1/photo/' . $image;
+                $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+                $picname = basename($_FILES["pic"]['name']);
+                $photo = time() . $picname;
             }
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                array_push($errors, "the email is not valid");
-            }
-            if (strlen($password) < 8 or !$number or !$specialChars) {
-                array_push($errors, "Password should be at least 8 characters in length and include one number, and one special character");
-            }
-            if ($password !== $repeated_password) {
-                array_push($errors, "the password does not match");
-            }
-
-            if (count($errors) > 0) {
-                foreach ($errors as $error) {
-                    echo "<div class='alert alert-danger'>$error</div>";
-                }
+            if ($_FILES["pic"]['size'] > 20000000 || !in_array($imageFileType, ["jpg", "jpeg", "png"])) {
+        ?>
+                <script>
+                    alert("Please upload a photo with the extension jpg or jpeg or png");
+                </script>
+        <?php
             } else {
-                // Checking if username already exists
-                $sql = "SELECT * FROM users WHERE userName = ?";
-                $stmt = mysqli_stmt_init($conn);
-                $prepareStmt = mysqli_stmt_prepare($stmt, $sql);
-                if ($prepareStmt) {
-                    mysqli_stmt_bind_param($stmt, "s", $username);
-                    mysqli_stmt_execute($stmt);
-                    mysqli_stmt_store_result($stmt);
-                    $rowCount = mysqli_stmt_num_rows($stmt);
-                    if ($rowCount > 0) {
-                        echo "<div class='alert alert-danger'>userName already exists!</div>";
-                    } else {
-                        $sql = "INSERT INTO users (fullName, userName, password, email, address, phone, birthDate) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?)";
-                        $stmt = mysqli_stmt_init($conn);
-                        $prepareStmt = mysqli_stmt_prepare($stmt, $sql);
-                        if ($prepareStmt) {
-                            mysqli_stmt_bind_param($stmt, "sssssss", $fullname, $username, $password, $email, $address, $phone, $birth_date);
-                            mysqli_stmt_execute($stmt);
-                            echo "<div class='alert alert-success'>You are registered successfully.</div>";
-                        } else {
-                            echo "<div class='alert alert-danger'>Error: " . mysqli_error($conn) . "</div>";
-                        }
+                $picuploaded = 1;
+            }
+            if ($picuploaded == 1) {
+                if (empty($fullname) or empty($username) or empty($birth_date) or empty($phone) or empty($address) or empty($email) or empty($password) or empty($repeated_password)) {
+                    array_push($errors, "All fields are required");
+                }
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    array_push($errors, "The email is not valid");
+                }
+                if (strlen($password) < 8 or !$number or !$specialChars) {
+                    array_push($errors, "Password should be at least 8 characters in length and include one number, and one special character");
+                }
+                if ($password !== $repeated_password) {
+                    array_push($errors, "The passwords do not match");
+                }
+                if (count($errors) > 0) {
+                    foreach ($errors as $error) {
+                        echo "<div class='alert alert-danger'>$error</div>";
                     }
                 } else {
-                    echo "<div class='alert alert-danger'>Error: " . mysqli_error($conn) . "</div>";
+                    // Checking if username already exists
+                    $sql = "SELECT * FROM users WHERE userName = ?";
+                    $stmt = mysqli_stmt_init($conn);
+                    $prepareStmt = mysqli_stmt_prepare($stmt, $sql);
+                    if ($prepareStmt) {
+                        mysqli_stmt_bind_param($stmt, "s", $username);
+                        mysqli_stmt_execute($stmt);
+                        mysqli_stmt_store_result($stmt);
+                        $rowCount = mysqli_stmt_num_rows($stmt);
+                        if ($rowCount > 0) {
+                            echo "<div class='alert alert-danger'>Username already exists!</div>";
+                        } else {
+                            $sql = "INSERT INTO users (fullName, userName, password, email, address, phone, birthDate, image) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                            $stmt = mysqli_stmt_init($conn);
+                            $prepareStmt = mysqli_stmt_prepare($stmt, $sql);
+                            if ($prepareStmt) {
+                                mysqli_stmt_bind_param($stmt, "ssssssss", $fullname, $username, $password, $email, $address, $phone, $birth_date, $image);
+                                mysqli_stmt_execute($stmt);
+                                echo "<div class='alert alert-success'>You are registered successfully.</div>";
+                            } else {
+                                echo "<div class='alert alert-danger'>Error: " . mysqli_error($conn) . "</div>";
+                            }
+                        }
+                    } else {
+                        echo "<div class='alert alert-danger'>Error: " . mysqli_error($conn) . "</div>";
+                    }
                 }
             }
         }
         ?>
 
-        <form action="index.php" method="post">
+        <form action="index.php" method="post" enctype="multipart/form-data">
             <div class="form-element">
-                <input type="text" class="form-control" name="fullname" placeholder="Full Name:">
+                <input type="text" class="form-control" name="fullname" placeholder="Full Name">
             </div>
             <div class="form-element">
-                <input type="text" class="form-control" name="username" placeholder="User Name:">
+                <input type="text" class="form-control" name="username" placeholder="Username">
             </div>
             <div class="date-element">
-                <input type="date" class="form-control" name="birth-date" id="birth-date" placeholder="Birth Date:">
+                <input type="date" class="form-control" name="birth-date" id="birth-date" placeholder="Birth Date">
                 <button type="button" class="check-button" id="check-actors">Check Actors</button>
             </div>
             <div class="form-element">
-                <input type="number" class="form-control" name="phone" placeholder="Phone:">
+                <input type="number" class="form-control" name="phone" placeholder="Phone">
             </div>
             <div class="form-element">
-                <input type="text" class="form-control" name="address" placeholder="Address:">
+                <input type="text" class="form-control" name="address" placeholder="Address">
             </div>
             <div class="form-element">
-                <input type="email" class="form-control" name="email" placeholder="Email:">
+                <input type="email" class="form-control" name="email" placeholder="Email">
             </div>
             <div class="form-element">
-                <input type="password" class="form-control" name="password" placeholder="Password:">
+                <input type="password" class="form-control" name="password" placeholder="Password">
             </div>
             <div class="form-element">
-                <input type="password" class="form-control" name="repeated-password" placeholder="Repeated Password:">
+                <input type="password" class="form-control" name="repeated-password" placeholder="Repeated Password">
+            </div>
+            <div class="form-element">
+                <input type="file" id="pic" required class="form-control" name="pic" placeholder="Upload Image">
             </div>
 
             <div class="submit-button">
-                <input type="submit" class="btn-primarly" value="register" name="submit">
+                <input type="submit" class="btn-primarly" value="Register" name="submit">
             </div>
         </form>
     </div>
