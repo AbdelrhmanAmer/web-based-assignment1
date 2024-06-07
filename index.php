@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Registration Form</title>
@@ -9,7 +8,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
-
 <body>
     <?php
     error_reporting(E_ALL);
@@ -19,7 +17,22 @@
     <div class="container">
         <?php
         require_once "db_ops.php";
+        $old_values = [
+            'fullname' => '',
+            'username' => '',
+            'birth-date' => '',
+            'phone' => '',
+            'address' => '',
+            'email' => '',
+            'password' => '',
+            'repeated-password' => ''
+        ];
+        
         if (isset($_POST["submit"])) {
+            foreach ($old_values as $key => $value) {
+                $old_values[$key] = $_POST[$key];
+            }
+            
             $fullname = $_POST["fullname"];
             $username = $_POST["username"];
             $birth_date = $_POST["birth-date"];
@@ -100,29 +113,29 @@
 
         <form action="index.php" method="post" enctype="multipart/form-data">
             <div class="form-element">
-                <input type="text" class="form-control" name="fullname" placeholder="Full Name">
+                <input type="text" class="form-control" name="fullname" placeholder="Full Name" value="<?php echo htmlspecialchars($old_values['fullname']); ?>">
             </div>
             <div class="form-element">
-                <input type="text" class="form-control" name="username" placeholder="Username">
+                <input type="text" class="form-control" name="username" placeholder="Username" value="<?php echo htmlspecialchars($old_values['username']); ?>">
             </div>
             <div class="date-element">
-                <input type="date" class="form-control" name="birth-date" id="birth-date" placeholder="Birth Date">
+                <input type="date" class="form-control" name="birth-date" id="birth-date" placeholder="Birth Date" value="<?php echo htmlspecialchars($old_values['birth-date']); ?>">
                 <button type="button" class="check-button" id="check-actors">Check Actors</button>
             </div>
             <div class="form-element">
-                <input type="number" class="form-control" name="phone" placeholder="Phone">
+                <input type="number" class="form-control" name="phone" placeholder="Phone" value="<?php echo htmlspecialchars($old_values['phone']); ?>">
             </div>
             <div class="form-element">
-                <input type="text" class="form-control" name="address" placeholder="Address">
+                <input type="text" class="form-control" name="address" placeholder="Address" value="<?php echo htmlspecialchars($old_values['address']); ?>">
             </div>
             <div class="form-element">
-                <input type="email" class="form-control" name="email" placeholder="Email">
+                <input type="email" class="form-control" name="email" placeholder="Email" value="<?php echo htmlspecialchars($old_values['email']); ?>">
             </div>
             <div class="form-element">
-                <input type="password" class="form-control" name="password" placeholder="Password">
+                <input type="password" class="form-control" name="password" placeholder="Password" value="<?php echo htmlspecialchars($old_values['password']); ?>">
             </div>
             <div class="form-element">
-                <input type="password" class="form-control" name="repeated-password" placeholder="Repeated Password">
+                <input type="password" class="form-control" name="repeated-password" placeholder="Repeated Password" value="<?php echo htmlspecialchars($old_values['repeated-password']); ?>">
             </div>
             <div class="form-element">
                 <input type="file" id="pic" required class="form-control" name="pic" placeholder="Upload Image">
@@ -221,5 +234,4 @@
     </script>
     <?php include 'footer.php'; ?>
 </body>
-
 </html>
