@@ -33,8 +33,8 @@
             $image = time() . $_FILES["pic"]['name'];
             $picuploaded = 0;
             $errors = array();
-            if (move_uploaded_file($_FILES["pic"]['tmp_name'], $_SERVER["DOCUMENT_ROOT"] . '/assignment1/photo/' . $image)) {
-                $target_file = $_SERVER["DOCUMENT_ROOT"] . '/assignment1/photo/' . $image;
+            if (move_uploaded_file($_FILES["pic"]['tmp_name'], $_SERVER["DOCUMENT_ROOT"] . '/web-based-assignment1/photo/' . $image)) {
+                $target_file = $_SERVER["DOCUMENT_ROOT"] . '/web-based-assignment1/photo/' . $image;
                 $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
                 $picname = basename($_FILES["pic"]['name']);
                 $photo = time() . $picname;
